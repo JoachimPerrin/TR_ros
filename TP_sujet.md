@@ -9,7 +9,7 @@
 - Explorons les services. 
   - Essayez d'activer/de désactiver la trace écrite. 
   - Expliquez comment vous comprenez les services
-  
+
 - Ensuite explorez les paramètres de la tortue et listez les paramètres possibles. $ros\ param$ 
   - Trouvez comment grâce aux paramètre vous arrivez à changer des couleurs de la simulation du turtle. 
 - Expliquez les différences entre topic, param et services
