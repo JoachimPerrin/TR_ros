@@ -42,7 +42,7 @@ Vector3  angular
 Here we see how `geometry_msgs/msg/Twist` are structured.
 
 ```console
-$ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2, y: 0.0, z: 1.0}, angular: {x: 2.0, y: 0.0,z: 0.8}}"
+$ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0,z: 0.8}}"
 ```
 Now the turtle1 start spinning (indefinitely as this command continuously publish by default)
 

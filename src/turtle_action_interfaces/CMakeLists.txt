@@ -24,9 +24,11 @@ if(BUILD_TESTING)
 endif()
 
 find_package(rosidl_default_generators REQUIRED)
+find_package(turtlesim REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "action/TrajGen.action"
+  DEPENDENCIES turtlesim
 )
 
 ament_package()

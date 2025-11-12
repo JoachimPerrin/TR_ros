@@ -24,7 +24,7 @@ Nous allons commencer par discuter avec le turtlesim en :
   
 Tout d'abord préparez un launch file afin de pouvoir lancer les codes de manière centralisée. [launch file in ros2](http://docs.ros.org/en/humble/Tutorials/Intermediate/Launch/Creating-Launch-Files.html)
 - Nous pouvons essayer de refaire les actions de la section précédente mais en utilisant le langage CPP. 
-  - Lancer en topic des consignes de mouvement récupérer la position courante du turtle
+  - Lancer en topic des consignes de mouvement et récupérer la position courante du turtle
   - configurer un paramètre qui permet d'activer la trace du crayon (paramètre boolean dans votre noeud) qui lance un service setpen sur la turtle.
   - Changer le paramètre de couleur du background (Vert par défaut) si la turtle arrive sur les bords (Rouge)  
 
