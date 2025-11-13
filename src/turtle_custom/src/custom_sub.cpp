@@ -1,9 +1,13 @@
+#include <functional>
 #include <memory>
+#include <thread>
+
 #include "turtle_custom/custom_sub.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
 
-TURTLE_CUSTOM_CPP_PUBLIC
-explicit PositionMonitor::PositionMonitor(const rclcpp::NodeOptions &options = rclcpp::NodeOptions())
+namespace custom
+{
+TurtlePlugin::TurtlePlugin(const rclcpp::NodeOptions &options = rclcpp::NodeOptions())
     : Node("movement_subscriber", options), was_out_(false)
 {
     std::string turtle_name = "turtle1";
@@ -43,13 +47,13 @@ explicit PositionMonitor::PositionMonitor(const rclcpp::NodeOptions &options = r
             if (is_out)
                 turtlesim_client_->set_parameters(
                     {rclcpp::Parameter("background_r", 122),
-                     rclcpp::Parameter("background_g", 42),
-                     rclcpp::Parameter("background_b", 42)});
+                        rclcpp::Parameter("background_g", 42),
+                        rclcpp::Parameter("background_b", 42)});
             else
                 turtlesim_client_->set_parameters(
                     {rclcpp::Parameter("background_r", 0),
-                     rclcpp::Parameter("background_g", 122),
-                     rclcpp::Parameter("background_b", 84)});
+                        rclcpp::Parameter("background_g", 122),
+                        rclcpp::Parameter("background_b", 84)});
             was_out_ = is_out;
         }
     };
@@ -77,16 +81,16 @@ explicit PositionMonitor::PositionMonitor(const rclcpp::NodeOptions &options = r
     using namespace std::placeholders;
 
     auto handle_goal = [this](
-                           const rclcpp_action::GoalUUID &uuid,
-                           std::shared_ptr<const TrajGen::Goal> goal)
+                            const rclcpp_action::GoalUUID &uuid,
+                            std::shared_ptr<const TrajGen::Goal> goal)
     {
-        RCLCPP_INFO(this->get_logger(), "Received goal request with order %d", goal->targets[0].x);
+        RCLCPP_INFO(this->get_logger(), "Received goal request with order");
         (void)uuid;
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     };
 
     auto handle_cancel = [this](
-                             const std::shared_ptr<GoalHandleTrajGen> goal_handle)
+                                const std::shared_ptr<GoalHandleTrajGen> goal_handle)
     {
         RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
         (void)goal_handle;
@@ -94,10 +98,8 @@ explicit PositionMonitor::PositionMonitor(const rclcpp::NodeOptions &options = r
     };
 
     auto handle_accepted = [this](
-                               const std::shared_ptr<GoalHandleTrajGen> goal_handle)
+                                const std::shared_ptr<GoalHandleTrajGen> goal_handle)
     {
-        // this needs to return quickly to avoid blocking the executor,
-        // so we declare a lambda function to be called inside a new thread
         auto execute_in_thread = [this, goal_handle]()
         { return this->execute(goal_handle); };
         std::thread{execute_in_thread}.detach();
@@ -111,39 +113,39 @@ explicit PositionMonitor::PositionMonitor(const rclcpp::NodeOptions &options = r
         handle_accepted);
 }
 
-bool PositionMonitor::is_out_(const Pose &p)
+bool TurtlePlugin::is_out_(const Pose &p)
 {
     return ((p.x < tl.x ||
-             p.x > br.x ||
-             p.y < tl.y ||
-             p.y > br.y));
+                p.x > br.x ||
+                p.y < tl.y ||
+                p.y > br.y));
 }
 
-void PositionMonitor::execute(const std::shared_ptr<GoalHandleTrajGen> goal_handle)
+void TurtlePlugin::execute(const std::shared_ptr<GoalHandleTrajGen> goal_handle)
 {
     RCLCPP_INFO(this->get_logger(), "Executing goal");
     rclcpp::Rate loop_rate(10);
     const auto goal = goal_handle->get_goal();
-    auto feedback = std::make_shared<TrajGen::Feedback>();
-    auto &sequence = feedback->path_taken;
+    // auto feedback = std::make_shared<TrajGen::Feedback>();
+    // auto &sequence = feedback->path_taken;
     // sequence.push_back(0);
     // sequence.push_back(1);
-    auto result = std::make_shared<TrajGen::Result>();
+    // auto result = std::make_shared<TrajGen::Result>();
 
-    for (int i = 1; (i < goal->order) && rclcpp::ok(); ++i)
+    for (int i = 1; (i < 10) && rclcpp::ok(); ++i)
     {
         // Check if there is a cancel request
         if (goal_handle->is_canceling())
         {
-            result->sequence = sequence;
-            goal_handle->canceled(result);
+            // result->sequence = sequence;
+            // goal_handle->canceled(result);
             RCLCPP_INFO(this->get_logger(), "Goal canceled");
             return;
         }
-        // Update sequence
-        sequence.push_back(sequence[i] + sequence[i - 1]);
-        // Publish feedback
-        goal_handle->publish_feedback(feedback);
+        // // Update sequence
+        // sequence.push_back(sequence[i] + sequence[i - 1]);
+        // // Publish feedback
+        // goal_handle->publish_feedback(feedback);
         RCLCPP_INFO(this->get_logger(), "Publish feedback");
 
         loop_rate.sleep();
@@ -152,18 +154,19 @@ void PositionMonitor::execute(const std::shared_ptr<GoalHandleTrajGen> goal_hand
     // Check if goal is done
     if (rclcpp::ok())
     {
-        result->sequence = sequence;
-        goal_handle->succeed(result);
+        // result->sequence = sequence;
+        // goal_handle->succeed(result);
         RCLCPP_INFO(this->get_logger(), "Goal succeeded");
     }
 }
-
-RCLCPP_COMPONENTS_REGISTER_NODE(turtle_custom::TrajGenServer);
-
-int main(int argc, char *argv[])
-{
-    rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<PositionMonitor>());
-    rclcpp::shutdown();
-    return 0;
 }
+
+RCLCPP_COMPONENTS_REGISTER_NODE(custom::TurtlePlugin);
+
+// int main(int argc, char *argv[])
+// {
+//     rclcpp::init(argc, argv);
+//     rclcpp::spin(std::make_shared<TurtlePlugin>());
+//     rclcpp::shutdown();
+//     return 0;
+// }

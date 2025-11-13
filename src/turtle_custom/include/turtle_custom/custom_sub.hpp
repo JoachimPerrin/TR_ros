@@ -11,17 +11,21 @@
 
 #include "turtle_custom/visibility_control.h"
 
-using namespace std::chrono_literals;
+
+namespace custom
+{
 using namespace geometry_msgs::msg;
 using namespace turtlesim::msg;
 using namespace turtlesim::srv;
 using namespace turtle_action_interfaces::action;
+using namespace std::chrono_literals;
 using GoalHandleTrajGen = rclcpp_action::ServerGoalHandle<TrajGen>;
 
-class PositionMonitor : public rclcpp::Node
+class TurtlePlugin : public rclcpp::Node
 {
 public:
-    PositionMonitor(const rclcpp::NodeOptions &options);
+    TURTLE_CUSTOM_CPP_PUBLIC
+    explicit TurtlePlugin(const rclcpp::NodeOptions &options);
 
 private:
     bool is_out_(const Pose &p);
@@ -45,5 +49,5 @@ private:
 
     rclcpp_action::Server<TrajGen>::SharedPtr traj_gen_server_;
 };
-
+}
 #endif
