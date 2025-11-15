@@ -4,7 +4,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "geometry_msgs/msg/twist.hpp"
-// #include "geometry_msgs/msg/vector3.hpp"
 #include "turtlesim/srv/set_pen.hpp"
 #include "turtlesim/msg/pose.hpp"
 #include "turtle_action_interfaces/action/traj_gen.hpp"
@@ -30,7 +29,8 @@ public:
 private:
     bool is_out_(const Pose &p);
     void execute(const std::shared_ptr<GoalHandleTrajGen> goal_handle);
-
+    void interpolate(std::vector<Pose> &traj, const Pose &start, const Pose &end);
+    void control_towards(const Pose &target);
     Twist cmd_vel_msg_;
     Pose cur_pose_;
     std::shared_ptr<SetPen::Request> pen_request_;

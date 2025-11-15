@@ -1,10 +1,10 @@
 # Request
-turtlesim/Pose[] targets
+turtlesim/Pose[] path
 ---
 # Result
-turtlesim/Pose next_target
-float32 completion
----
-# Feedback
 turtlesim/Pose[] path_taken
 uint16 path_size
+---
+# Feedback
+turtlesim/Pose next_target
+float32 completion

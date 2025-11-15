@@ -79,3 +79,8 @@ ros2 pkg create --build-type ament_cmake --license Apache-2.0 turtle_custom --no
 mkdir turtle_custom/launch
 
 ```
+
+
+```
+ros2 action send_goal /traj_gen turtle_action_interfaces/action/TrajGen "{path: [{x: 1.0, y: 1.0}, {x: 10.0, y: 10.0}, {x: 1.0, y: 10.0}, {x: 10.0, y: 1.0}]}"
+```
